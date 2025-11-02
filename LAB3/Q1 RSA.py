@@ -23,7 +23,6 @@ decipher_rsa = PKCS1_OAEP.new(private_key)
 plaintext = decipher_rsa.decrypt(ciphertext)
 print("Decrypted message:", plaintext.decode('utf-8'))
 
-
 # with already given values of keys
 
 from Crypto.PublicKey import RSA

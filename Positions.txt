@@ -15,3 +15,9 @@ Add_1- custom DES diff it size
 Add_3 - AES256
 Add_4 - cbc DES
 Add5- nonce with AED CTR
+
+LAB-3
+
+Q1-RSA with and without key given
+Q2-ECC 
+Q3-Elagamal with and without given key
