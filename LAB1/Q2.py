@@ -1,3 +1,4 @@
+# vigenere cipher
 def vigenere_encrypt(plaintext, key):
     plaintext = plaintext.replace(" ","").upper()
     key = key.upper()
@@ -25,7 +26,7 @@ print("Vigenere Cipher:")
 print("Ciphertext:", ct_v)
 print("Decrypted:", pt_v)
 
-
+# autokey cipher
 def autokey_encrypt(plaintext, key):
     plaintext = plaintext.replace(" ","").upper()
     ct = ""

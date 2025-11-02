@@ -1,5 +1,7 @@
 import string
 
+# entire code platfair cipher
+
 def create_playfair_matrix(key):
     key = "".join(dict.fromkeys(key.upper()))  # remove duplicates
     alphabet = "ABCDEFGHIKLMNOPQRSTUVWXYZ"      # merge I/J

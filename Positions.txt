@@ -1,0 +1,6 @@
+LAB-1
+Q1-additive,multiplicative, affine
+Q2-Vignere and autokey
+Q3-Playfair
+Q4-Hill cipher
+Q6/Q_Addn1-brute force
