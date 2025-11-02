@@ -1,0 +1,148 @@
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
+
+# -------------------
+# Step 1: Generate RSA keys (or use given n, e, d)
+# -------------------
+key = RSA.generate(2048)            # generate 2048-bit keypair
+public_key = key.publickey()        # public key (n, e)
+private_key = key                   # private key (n, d)
+
+# -------------------
+# Step 2: Encrypt the message
+# -------------------
+message = "Asymmetric Encryption".encode('utf-8')
+cipher_rsa = PKCS1_OAEP.new(public_key)   # RSA with OAEP padding
+ciphertext = cipher_rsa.encrypt(message)
+print("Ciphertext (bytes):", ciphertext)
+
+# -------------------
+# Step 3: Decrypt the message
+# -------------------
+decipher_rsa = PKCS1_OAEP.new(private_key)
+plaintext = decipher_rsa.decrypt(ciphertext)
+print("Decrypted message:", plaintext.decode('utf-8'))
+
+
+# with already given values of keys
+
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
+
+# -------------------
+# Step 1: Construct RSA keys from given components
+# -------------------
+# Example values (replace with actual integers)
+n = 0xD6B3C0F2F4F77C6D        # modulus
+e = 65537                        # public exponent
+d = 0x4A8F7B1C9E              # private exponent
+
+# Construct RSA key objects
+public_key = RSA.construct((n, e))
+private_key = RSA.construct((n, e, d))
+
+# -------------------
+# Step 2: Encrypt the message
+# -------------------
+message = "Asymmetric Encryption".encode('utf-8')
+cipher_rsa = PKCS1_OAEP.new(public_key)
+ciphertext = cipher_rsa.encrypt(message)
+print("Ciphertext (bytes):", ciphertext)
+
+# -------------------
+# Step 3: Decrypt the message
+# -------------------
+decipher_rsa = PKCS1_OAEP.new(private_key)
+plaintext = decipher_rsa.decrypt(ciphertext)
+print("Decrypted message:", plaintext.decode('utf-8'))
+
+
+
+
+
+
+
+
+
+
+
+from Crypto.PublicKey import ElGamal
+from Crypto.Random import get_random_bytes, random
+from Crypto.Util.number import bytes_to_long, long_to_bytes
+
+# -------------------
+# Step 1: Generate ElGamal keypair (or use given p, g, h)
+# -------------------
+key = ElGamal.generate(2048, random.get_random_bytes)
+public_key = key.publickey()  # (p, g, h)
+private_key = key              # x
+
+# -------------------
+# Step 2: Prepare message as integer
+# -------------------
+message = b"Confidential Data"
+m_int = bytes_to_long(message)  # convert bytes to integer
+
+# -------------------
+# Step 3: Encrypt message
+# -------------------
+k = random.StrongRandom().randint(1, key.p-2)  # ephemeral key k
+ciphertext = public_key.encrypt(m_int, k)      # returns tuple (c1, c2)
+print("Ciphertext:", ciphertext)
+
+# -------------------
+# Step 4: Decrypt message
+# -------------------
+m_decrypted = private_key.decrypt(ciphertext)
+plaintext = long_to_bytes(m_decrypted)
+print("Decrypted message:", plaintext.decode('utf-8'))
+
+
+
+# with given values already 
+
+from Crypto.Util.number import bytes_to_long, long_to_bytes
+import random
+
+# -------------------
+# Step 1: Given ElGamal keys
+# -------------------
+p = 7919
+g = 2
+h = 6465
+x = 2999   # private key
+
+# -------------------
+# Step 2: Convert message to integer
+# -------------------
+message = b"Asymmetric Algorithms"
+m = bytes_to_long(message)   # convert bytes -> integer
+print("Message as integer:", m)
+
+# -------------------
+# Step 3: Encrypt message
+# -------------------
+# Choose ephemeral key k (1 <= k <= p-2, coprime to p-1)
+k = random.randint(1, p-2)
+while True:
+    if pow(g, k, p) != 0:
+        break
+    k = random.randint(1, p-2)
+
+c1 = pow(g, k, p)
+c2 = (m * pow(h, k, p)) % p
+
+ciphertext = (c1, c2)
+print("Ciphertext:", ciphertext)
+
+# -------------------
+# Step 4: Decrypt message
+# -------------------
+# m = c2 * (c1^x)^(-1) mod p
+s = pow(c1, x, p)                  # shared secret
+s_inv = pow(s, -1, p)              # modular inverse
+m_decrypted = (c2 * s_inv) % p     # recover integer
+plaintext = long_to_bytes(m_decrypted)
+print("Decrypted message:", plaintext.decode('utf-8'))
+
+
