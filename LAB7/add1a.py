@@ -49,3 +49,10 @@ if __name__ == "__main__":
     print("cipher b:", c_b)
     print("cipher a*b:", c_prod)
     print("decrypted product:", dec_prod)  # should be 21
+
+
+# Enc(a)×Enc(b)=Enc(a×b) in elgamal
+    
+# The code implements **ElGamal encryption**, which allows multiplying encrypted numbers without decryption.
+# It encrypts 7 and 3, multiplies their ciphertexts, and decrypts the result to get **21**, proving multiplicative homomorphism.
+# Internally, ciphertexts ((g^r, m·y^r)) multiply component-wise so that decryption yields the product of the original plaintexts.

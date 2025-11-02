@@ -56,3 +56,7 @@ if __name__ == "__main__":
     print("cipher B:", cB)
     print("cipher sum:", cSum)
     print("decrypted sum:", decrypted_sum)  # expected 40
+
+# The code implements **Paillier encryption** to let two parties share encrypted data and compute a combined sum securely.
+# Each party encrypts its number (15 and 25), the server multiplies ciphertexts to get an encrypted sum, and decryption reveals **40**.
+# It demonstrates Paillier’s **additive homomorphism**, where multiplying ciphertexts equals adding plaintexts.

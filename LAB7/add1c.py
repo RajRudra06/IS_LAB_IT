@@ -32,7 +32,8 @@ def lagrange_interpolate(x, x_s, y_s, p):
     return total
 
 # ---------- Paillier (simple)
-def L(u, n): return (u-1)//n
+def L(u, n): 
+    return (u-1)//n
 
 def generate_paillier(bit_length=512):
     p = getPrime(bit_length//2)
@@ -65,7 +66,7 @@ if __name__ == "__main__":
     pub, priv = generate_paillier(bit_length=512)
     lam, mu = priv
     # choose prime > lam for Shamir field
-    prime = getPrime(256)
+    prime = getPrime(lam.bit_length() + 1)
     assert prime > lam
 
     # split lambda into shares among 5 parties, threshold 3
