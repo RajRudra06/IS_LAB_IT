@@ -47,7 +47,7 @@ def detect_collisions(hashes):
         else:
             seen[h] = s
     return collisions
-
+ 
 # -----------------------------
 # Experiment
 # -----------------------------

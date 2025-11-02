@@ -21,3 +21,11 @@ LAB-3
 Q1-RSA with and without key given
 Q2-ECC 
 Q3-Elagamal with and without given key
+Q4-RSA+ECC
+Q5-RSA+Elagmal performance
+
+Addn_4-menu driven hopital,elgamal key sharing
+
+LAB-5
+Q1- custom+lib hash
+Q2-Socket
