@@ -4,3 +4,14 @@ Q2-Vignere and autokey
 Q3-Playfair
 Q4-Hill cipher
 Q6/Q_Addn1-brute force
+
+LAB-2
+Q1-DES
+Q2-AES
+Q3-AES/DES time competetion
+Q4-triple DES
+Q5-custom AES key
+Add_1- custom DES diff it size
+Add_3 - AES256
+Add_4 - cbc DES
+Add5- nonce with AED CTR
