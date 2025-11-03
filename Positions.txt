@@ -31,3 +31,314 @@ Q1- custom+lib hash
 Q2-Socket
 
 git repo-
+
+
+Here are **clear, step-by-step lab procedures** for both questions — one for **GnuPG (secure storage, transmission, and digital signature)** and one for **Snort (NIDS)**.
+These steps follow the exact format used in academic practicals — easy to write in your record or demonstrate during a lab viva.
+
+---
+
+## 🧩 **Experiment 1 — Secure Storage, Transmission, and Digital Signature (GnuPG)**
+
+### 🎯 **Aim:**
+
+To securely store and transmit data using **encryption** and **digital signatures**, and to verify the signature after transmission — demonstrating **confidentiality**, **integrity**, and **authenticity**.
+
+---
+
+### ⚙️ **Tools / Concepts Used:**
+
+* **GnuPG (GNU Privacy Guard)** — command-line encryption/signing tool.
+* **RSA Algorithm** — for public-key cryptography.
+* **SHA-256** — for generating message hash for signatures.
+
+---
+
+### 🧭 **Step-by-Step Procedure**
+
+#### **Step 1: Install GnuPG**
+
+```bash
+sudo apt update
+sudo apt install gnupg -y
+```
+
+---
+
+#### **Step 2: Generate Key Pair**
+
+```bash
+gpg --full-generate-key
+```
+
+* Choose RSA and RSA
+* Key size: 2048 or 4096 bits
+* Enter name, email, and passphrase
+* This creates your public and private keys.
+  Check your key:
+
+```bash
+gpg --list-keys
+```
+
+---
+
+#### **Step 3: Create a File to Encrypt**
+
+```bash
+echo "Confidential project report: Do not share." > report.txt
+```
+
+---
+
+#### **Step 4: Encrypt the File (Confidentiality)**
+
+To send securely to another user (e.g., *Bob*):
+
+```bash
+gpg --output report.txt.gpg --encrypt --recipient "Bob"
+```
+
+File `report.txt.gpg` is now encrypted — only Bob can decrypt it using his private key.
+
+---
+
+#### **Step 5: Decrypt the File (Receiver side)**
+
+Bob decrypts using:
+
+```bash
+gpg --output decrypted.txt --decrypt report.txt.gpg
+```
+
+---
+
+#### **Step 6: Create a Digital Signature (Integrity + Authenticity)**
+
+Sender (Alice) signs the file:
+
+```bash
+gpg --output report.sig --detach-sign report.txt
+```
+
+This produces `report.sig` — a separate signature file.
+
+---
+
+#### **Step 7: Verify the Signature (Receiver side)**
+
+Bob verifies:
+
+```bash
+gpg --verify report.sig report.txt
+```
+
+If the message shows `Good signature from Alice`, then:
+
+* The file is unaltered (integrity).
+* The sender is authentic (authenticity).
+
+---
+
+#### **Step 8: Combine Signing and Encryption**
+
+For both confidentiality and authenticity in one command:
+
+```bash
+gpg --output secure_report.asc --armor --encrypt --sign --recipient "Bob" report.txt
+```
+
+Bob decrypts and verifies automatically:
+
+```bash
+gpg --decrypt secure_report.asc
+```
+
+---
+
+### 🧾 **Expected Output:**
+
+```
+gpg: encrypted with 2048-bit RSA key, ID XXXXXXXX
+gpg: Good signature from "Alice"
+Confidential project report: Do not share.
+```
+
+---
+
+### ✅ **Result:**
+
+Data was **encrypted**, **digitally signed**, and **successfully verified** after transmission using GnuPG.
+
+---
+
+## 🧩 **Experiment 2 — Configure and Use Snort as a NIDS**
+
+### 🎯 **Aim:**
+
+To configure and use **Snort** as a **Network Intrusion Detection System (NIDS)**, monitor real-time network traffic, apply rules, and analyze logs for potential intrusions.
+
+---
+
+### ⚙️ **Tools / Concepts Used:**
+
+* **Snort** — Open-source NIDS tool.
+* **ICMP (ping)** and **TCP SYN** traffic — to simulate suspicious packets.
+* **Snort rules** — detection logic for suspicious activities.
+
+---
+
+### 🧭 **Step-by-Step Procedure**
+
+#### **Step 1: Install Snort**
+
+```bash
+sudo apt update
+sudo apt install snort -y
+```
+
+When prompted, enter your local network (e.g., `192.168.1.0/24`).
+
+Check version:
+
+```bash
+snort -V
+```
+
+---
+
+#### **Step 2: Configure Network and Paths**
+
+Open configuration file:
+
+```bash
+sudo nano /etc/snort/snort.conf
+```
+
+Set:
+
+```
+var HOME_NET 192.168.1.0/24
+var EXTERNAL_NET any
+include $RULE_PATH/local.rules
+```
+
+---
+
+#### **Step 3: Add Custom Detection Rules**
+
+Edit local rules file:
+
+```bash
+sudo nano /etc/snort/rules/local.rules
+```
+
+Add:
+
+```
+# Detect ICMP echo requests (ping)
+alert icmp any any -> $HOME_NET any (msg:"ICMP Ping Detected"; itype:8; sid:1000001; rev:1;)
+
+# Detect suspicious TCP SYN packets on port 22
+alert tcp any any -> $HOME_NET 22 (msg:"Possible SSH Scan"; flags:S; sid:1000002; rev:1;)
+```
+
+Save and exit.
+
+---
+
+#### **Step 4: Test Configuration**
+
+```bash
+sudo snort -T -c /etc/snort/snort.conf
+```
+
+✅ “Snort successfully validated configuration!” means no syntax errors.
+
+---
+
+#### **Step 5: Run Snort in IDS Mode**
+
+```bash
+sudo snort -A console -q -c /etc/snort/snort.conf -i eth0
+```
+
+Now Snort is listening for traffic.
+
+---
+
+#### **Step 6: Generate Test Traffic**
+
+Open another terminal and run:
+
+```bash
+ping -c 2 192.168.1.5
+```
+
+or
+
+```bash
+sudo hping3 -S -p 22 -c 1 192.168.1.5
+```
+
+These will trigger the rules.
+
+---
+
+#### **Step 7: Check Alerts**
+
+Check console or alert file:
+
+```bash
+sudo tail -f /var/log/snort/alert
+```
+
+Expected alerts:
+
+```
+[**] [1:1000001:1] ICMP Ping Detected [**]
+[**] [1:1000002:1] Possible SSH Scan [**]
+```
+
+---
+
+#### **Step 8: Analyze Logs**
+
+Alerts are stored in:
+
+```
+/var/log/snort/alert
+```
+
+Each entry includes:
+
+* Timestamp
+* Source IP
+* Destination IP
+* Triggered rule ID and message
+
+---
+
+### ✅ **Result:**
+
+Snort successfully captured and identified suspicious network traffic (ICMP ping and SSH scan) using custom detection rules.
+
+---
+
+## 🧾 **Summary Table**
+
+| Part  | Tool  | Concept          | Demonstrated Outcome                     |
+| ----- | ----- | ---------------- | ---------------------------------------- |
+| **1** | GnuPG | Cryptography     | Secure encryption, signing, verification |
+| **2** | Snort | Network Security | Real-time intrusion detection & logging  |
+
+---
+
+### 🧠 **In Simple Words**
+
+* **GnuPG part:** Shows how to protect and verify data during communication.
+* **Snort part:** Shows how to monitor network packets and detect suspicious behavior.
+
+---
+
+Would you like me to convert these into a **formatted lab record file (Word/PDF style)** with Aim, Algorithm, Procedure, Output, and Result sections ready for submission?
