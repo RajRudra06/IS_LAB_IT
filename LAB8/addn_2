@@ -1,0 +1,63 @@
+# lab_snort_simulation.py
+import re
+import time
+
+# -----------------------------
+# 1. Define Detection Rules
+# -----------------------------
+rules = [
+    {"id": 1001, "pattern": r"ICMP_ECHO_REQUEST", "message": "Ping detected (possible scan)"},
+    {"id": 1002, "pattern": r"TCP_SYN.*22", "message": "Possible SSH brute-force attempt"},
+    {"id": 1003, "pattern": r"SQL_INJECTION", "message": "SQL Injection attempt detected"},
+    {"id": 1004, "pattern": r"PORT_SCAN", "message": "Network Port Scanning activity detected"}
+]
+
+# -----------------------------
+# 2. Simulated Network Traffic
+# -----------------------------
+packets = [
+    "ICMP_ECHO_REQUEST from 192.168.1.2 to 192.168.1.10",
+    "TCP_SYN from 192.168.1.5 to 192.168.1.10:22",
+    "HTTP_REQUEST normal_traffic",
+    "SQL_INJECTION from 192.168.1.8 targeting database",
+    "PORT_SCAN detected between 192.168.1.9 and 192.168.1.20"
+]
+
+# -----------------------------
+# 3. Analyze Traffic
+# -----------------------------
+def analyze_traffic(packets, rules):
+    alerts = []
+    for pkt in packets:
+        for rule in rules:
+            if re.search(rule["pattern"], pkt):
+                alerts.append({
+                    "time": time.strftime("%Y-%m-%d %H:%M:%S"),
+                    "rule_id": rule["id"],
+                    "alert": rule["message"],
+                    "packet": pkt
+                })
+    return alerts
+
+# -----------------------------
+# 4. Log Alerts
+# -----------------------------
+def log_alerts(alerts, filename="snort_alerts.log"):
+    with open(filename, "w") as f:
+        for alert in alerts:
+            entry = f"[{alert['time']}] Rule {alert['rule_id']}: {alert['alert']} | Packet: {alert['packet']}\n"
+            f.write(entry)
+    print("\nAlerts saved to snort_alerts.log")
+
+# -----------------------------
+# Demonstration
+# -----------------------------
+if __name__ == "__main__":
+    print("Monitoring network traffic...")
+    time.sleep(1)
+    detected_alerts = analyze_traffic(packets, rules)
+
+    for a in detected_alerts:
+        print(f"ALERT: {a['alert']} | Packet: {a['packet']}")
+
+    log_alerts(detected_alerts)

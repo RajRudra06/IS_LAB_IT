@@ -1,0 +1,67 @@
+# lab_gnupg_simulation.py
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
+from Crypto.Signature import pkcs1_15
+from Crypto.Hash import SHA256
+
+# -----------------------------
+# 1. Generate RSA Key Pair
+# -----------------------------
+def generate_keys():
+    key_pair = RSA.generate(2048)
+    pub_key = key_pair.publickey()
+    priv_key = key_pair
+    return pub_key, priv_key
+
+# -----------------------------
+# 2. Encrypt and Decrypt Data
+# -----------------------------
+def encrypt_data(pub_key, data):
+    cipher = PKCS1_OAEP.new(pub_key)
+    return cipher.encrypt(data.encode())
+
+def decrypt_data(priv_key, ciphertext):
+    cipher = PKCS1_OAEP.new(priv_key)
+    return cipher.decrypt(ciphertext).decode()
+
+# -----------------------------
+# 3. Sign and Verify
+# -----------------------------
+def sign_data(priv_key, data):
+    hash_val = SHA256.new(data.encode())
+    signature = pkcs1_15.new(priv_key).sign(hash_val)
+    return signature
+
+def verify_signature(pub_key, data, signature):
+    hash_val = SHA256.new(data.encode())
+    try:
+        pkcs1_15.new(pub_key).verify(hash_val, signature)
+        return True
+    except (ValueError, TypeError):
+        return False
+
+# -----------------------------
+# Demonstration
+# -----------------------------
+if __name__ == "__main__":
+    pub, priv = generate_keys()
+
+    # Data to secure
+    message = "Sensitive report: Project Alpha Confidential Data"
+    print("Original Data:", message)
+
+    # Encrypt (secure transmission)
+    encrypted = encrypt_data(pub, message)
+    print("\nEncrypted Data:", encrypted)
+
+    # Decrypt (receiver)
+    decrypted = decrypt_data(priv, encrypted)
+    print("\nDecrypted Data:", decrypted)
+
+    # Sign (sender creates signature)
+    signature = sign_data(priv, message)
+    print("\nDigital Signature Created.")
+
+    # Verify (receiver verifies authenticity)
+    verified = verify_signature(pub, message, signature)
+    print("Signature Verified:", verified)
