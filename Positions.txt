@@ -342,3 +342,14 @@ Snort successfully captured and identified suspicious network traffic (ICMP ping
 ---
 
 Would you like me to convert these into a **formatted lab record file (Word/PDF style)** with Aim, Algorithm, Procedure, Output, and Result sections ready for submission?
+
+
+
+
+
+
+
+You said:
+in mac ?
+
+ChatGPT can make mistakes. Check important info. See Cookie Preferences.
